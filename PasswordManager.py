@@ -64,6 +64,8 @@ def get_info(acct_name, acct_password, confirm_acct_password, new):
         messagebox.showinfo("Alert", "Passwords do not match")
         destroy_acct(new)
         account_window()
+    elif acct_name.get() == "":
+        messagebox.showinfo("Alert!", "Please enter a username")
     else:
         # Using try-except because if a different name tries to log in with an already taken password you get an error
         try:
