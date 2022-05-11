@@ -1,1 +1,1 @@
-# FinalProject Application to store website information
+# FinalProject Application to store website information. To use the program you must use the two images. Open up the image files and right click on the image. Next, save the image as the default file name and then move them into your IDE. 
