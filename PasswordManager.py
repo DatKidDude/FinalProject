@@ -105,16 +105,16 @@ def account_window():
     create_account.place(relx=0.5, rely=0.07, anchor="center")
 
     # Creating Entry Boxes
-    # Stores account name
+    # Stores account name in Create Account window
     acct_name = tk.Entry(label_frame, width=40, fg="black", border=0, bg="#F3F8F6", font=("Times New Roman", 13))
     acct_name.place(relx=0.1, rely=0.2)
     acct_name.insert(0, "Username/Email")
     acct_name.focus()
-    # Stores the account password
+    # Stores the account password in Create Account window
     acct_password = tk.Entry(label_frame, width=40, fg="black", border=0, bg="#F3F8F6", font=("Times New Roman", 13))
     acct_password.place(relx=0.1, rely=0.35)
     acct_password.insert(0, "Password (Must be at least 8 characters long)")
-    # Validates account password
+    # Validates account password in Create Account window
     confirm_acct_password = tk.Entry(label_frame, width=40, fg="black", border=0, bg="#F3F8F6", font=("Times New Roman", 13))
     confirm_acct_password.place(relx=0.1, rely=0.5)
     confirm_acct_password.insert(0, "Re-enter password")
@@ -170,6 +170,7 @@ def login(acct_name, acct_pass):
 
 def appWindow():
     """Creating a separate window for app"""
+    # Globals are used in the update and delete functions
     global update_entry, delete_entry
     app = tk.Tk()
     app.title("PassVault")
@@ -200,22 +201,22 @@ def appWindow():
     delete_label.place(x=220, y=350)
 
     # Creating the entry boxes
-    # Stores the website name
+    # Stores the website name for main app window
     url_name = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=30, font=("Helvetica", 12))
     url_name.place(y=40)
-    # Stores the username
+    # Stores the username for main app window
     username_app = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=30, font=("Helvetica", 12))
     username_app.place(y=95)
-    # Stores the password
+    # Stores the password for main app window
     password_app = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=30, font=("Helvetica", 12))
     password_app.place(y=150)
-    # Stores the record ID number
+    # Stores the record ID number in main app window
     update_entry = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=10, font=("Helvetica", 12), bd=2)
     update_entry.place(x=120, y=303, height=25)
-    # Stores the record ID number
+    # Stores the record ID number in main app window
     delete_entry = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=10, font=("Helvetica", 12), bd=2)
     delete_entry.place(x=120, y=353, height=25)
-    # Stores the website name
+    # Stores the website name in main app window
     web_entry = tk.Entry(app_frame, bg="#F3F8F6", fg="black", width=25, font=("Helvetica", 12), bd=2)
     web_entry.place(x=120, y=400, height=28)
 
@@ -228,7 +229,6 @@ def appWindow():
     strong.place(x=180, y=180)
 
     # Creating app buttons
-    global update_record, delete_record
     pass_generate = tk.Button(app_frame, text="Generate Password", bg="#36CBE6", pady=1, font=("Helvetica", 9),
                               command=lambda: password_generator(r.get(), password_app))
     pass_generate.place(x=277, y=147)
@@ -257,7 +257,7 @@ def appWindow():
 
 
 def save_data(url_name, username, password):
-    """Submitting user information to user data table."""
+    """Submitting user information to user data table via the add records button."""
 
     # Connecting to database
     conn = sqlite3.connect("passvault.db")
@@ -350,7 +350,7 @@ def show_records(app):
 
     # Create Return Button
     r_button = tk.Button(rec_window, text="Return to previous screen", bg="#36CBE6", width=20, pady=3,
-                         font=("Helvetica", 10), command=lambda: rec_window.destroy()) #record_button(rec_window)
+                         font=("Helvetica", 10), command=lambda: rec_window.destroy())
     r_button.place(relx=0.4, rely=0.9)
 
 
@@ -370,6 +370,8 @@ def pass_enter(e):
 
 def update(app):
     """Updates database using oid number"""
+    # Using a global so I can close the update window after saving entry
+    global editor
     editor = tk.Toplevel(app)
     editor.title("Update Record")
     editor.geometry("500x500+800+300")
@@ -476,6 +478,7 @@ def update_sql(url_editor_entry, username_editor_entry, password_app_entry, upda
         conn.close()
         messagebox.showinfo("Info", "Record Updated in Database!")
         update_entry.delete(0, END)
+        editor.destroy()
     else:
         messagebox.showinfo("Alert!", "Please fill in any empty boxes and make sure password is at least 8 "
                                       "characters.")
@@ -485,6 +488,7 @@ def delete_records():
     # Creating the database
     conn = sqlite3.connect("passvault.db")
     c = conn.cursor()
+    # Getting the ID number from the userData database
     c.execute("""SELECT oid FROM userData WHERE oid = :oid """,
                        {
                            "oid": delete_entry.get()
@@ -539,12 +543,12 @@ account_label = tk.Label(login_frame, text="Create an account?", fg="black", bg=
 account_label.place(x=80, y=320)
 
 # Creating the entry boxes
-# Stores the account username
+# Stores the account username on login screen
 username = tk.Entry(login_frame, width=30, fg="black", border=0, bg="#F3F8F6", font=("Times New Roman", 13))
 username.place(x=30, y=80)
 username.insert(0, "Username/Email")
 username.focus()
-# Stores account password
+# Stores account password on login screen
 password = tk.Entry(login_frame, width=30, fg="black", border=0, bg="#F3F8F6", font=("Times New Roman", 13))
 password.place(x=30, y=150)
 password.insert(0, "Password")
@@ -561,7 +565,7 @@ exit_btn = tk.Button(login_frame, text="Exit", bg="#3CB98F", width=35, pady=5, c
 exit_btn.place(x=45, y=255)
 
 def main():
-    """Starts up the application."""
+    """Starts up the application with the login window."""
     root.mainloop()
 
 if __name__ == "__main__":
